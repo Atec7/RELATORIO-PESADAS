@@ -96,26 +96,35 @@
         <button onclick="toggleFullScreen()">Tela Cheia</button>
     </div>
     <div class="image-container">
-        <img id="image1" src="img/dia 02 do 02.jpg" alt="" class="active">
-        <img id="image2" src="img/telageral.jpg" alt="">
-        <img id="image3" src="img/dia 02 do 02.jpg" alt="">
-        <img class="floating-image" src="img/Imagem1.png" alt="">
+        <img id="image1" src="dia 02 do 02.jpg" alt="" class="active">
+        <img id="image2" src="telageral.jpg" alt="">
+        
     </div>
 
     <script>
         let currentIndex = 0;
         const images = document.querySelectorAll('.image-container img:not(.floating-image)');
-        const displayDuration = 5 * 60 * 1000; // 5 minutos em milissegundos
-        const transitionDuration = 2000; // 2 segundos em milissegundos
+        const durations = [5 * 1 * 1000, 10 * 50 * 1000]; // Duração das imagens em milissegundos
+        const transitionDuration = 1000; // 2 segundos em milissegundos
 
         function showNextImage() {
             images[currentIndex].classList.remove('active');
             currentIndex = (currentIndex + 1) % images.length;
             images[currentIndex].classList.add('active');
-            setTimeout(showNextImage, displayDuration);
+            setTimeout(() => {
+                showNextImage();
+            }, transitionDuration);
         }
 
-        setTimeout(showNextImage, displayDuration);
+        function startSlideshow() {
+            setInterval(() => {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+            }, transitionDuration + durations[currentIndex % durations.length]);
+        }
+
+        setTimeout(startSlideshow, durations[currentIndex % durations.length]);
 
         function refreshImage() {
             showNextImage();
