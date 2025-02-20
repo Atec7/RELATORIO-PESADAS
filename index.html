@@ -59,6 +59,12 @@
             max-height: 100%;
             width: auto;
             height: auto;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+        .image-container img.active {
+            opacity: 1;
         }
         .floating-image {
             position: absolute;
@@ -90,26 +96,41 @@
         <button onclick="toggleFullScreen()">Tela Cheia</button>
     </div>
     <div class="image-container">
-        <img id="displayed-image" src="img/dia 02 do 02.jpg" alt="">
+        <img id="image1" src="img/dia 02 do 02.jpg" alt="" class="active">
+        <img id="image2" src="img/telageral.jpg" alt="">
+        <img id="image3" src="img/dia 02 do 02.jpg" alt="">
         <img class="floating-image" src="img/Imagem1.png" alt="">
     </div>
 
     <script>
+        let currentIndex = 0;
+        const images = document.querySelectorAll('.image-container img:not(.floating-image)');
+        const displayDuration = 5 * 60 * 1000; // 5 minutos em milissegundos
+        const transitionDuration = 2000; // 2 segundos em milissegundos
+
+        function showNextImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+            setTimeout(showNextImage, displayDuration);
+        }
+
+        setTimeout(showNextImage, displayDuration);
+
         function refreshImage() {
-            var img = document.getElementById('displayed-image');
-            img.src = img.src.split('?')[0] + '?' + new Date().getTime();
+            showNextImage();
         }
 
         function toggleFullScreen() {
-            var elem = document.getElementById('displayed-image');
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.mozRequestFullScreen) {
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
+            var img = document.querySelector('.image-container img.active');
+            if (img.requestFullscreen) {
+                img.requestFullscreen();
+            } else if (img.mozRequestFullScreen) { // Firefox
+                img.mozRequestFullScreen();
+            } else if (img.webkitRequestFullscreen) { // Chrome, Safari, and Opera
+                img.webkitRequestFullscreen();
+            } else if (img.msRequestFullscreen) { // IE/Edge
+                img.msRequestFullscreen();
             }
         }
     </script>
