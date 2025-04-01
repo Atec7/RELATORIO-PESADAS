@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório Obras e Manutenção - GrupoPartnership</title>
+    <title>PESADA</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #123;
-            margin: 0;
+            background: #123;
+            margin: 10;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         header {
-            background-color: #123;
+            background: linear-gradient(to right, #32cd32, #ffa500, #123);
             color: white;
             padding: 20px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 100%;
+            border-radius: 50px;
         }
         header h1 {
             margin: 0;
@@ -59,6 +60,8 @@
         }
         .button-container button:hover {
             background-color: #45a049;
+            color: white;
+            font-size: 25px;
         }
         main {
             padding: 20px;
@@ -88,11 +91,39 @@
         .image-container img.active {
             opacity: 1;
         }
+        p{
+            color: white;
+            font-size: arial;
+        }
+        .acessos{
+            border: white;
+            font-size: 30px;
+        }
+        .botoes-de-acesso{
+            padding: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            color: black;
+            border-radius: 10px;
+            border-color: #123;
+
+        }
+        .botoes-de-acesso button:hover {
+            background-color: rgb(11, 234, 112);
+            color: #123;
+            font-size: 20px;
+            border-color: gold;
+        }
+        .logo{
+            width: 200px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Setor Obras</h1>
+        <img class="logo" src="img/logo.png" alt="">
+        <h1>Equipes Pesadas</h1>
         <h2>Unidade de Rio Verde, Goiás - Grupo Partnership</h2>
         <div class="logo-container">
             <img src="" alt="">
@@ -108,10 +139,37 @@
             <div class="image-container">
                 <img id="image1" src="img/OBRA-DIARIO.jpg" alt="Imagem 1">
                 <img id="image2" src="img/OBRA-MES.jpg" alt="Imagem 2">
+                <img id="image3" src="img/PROGRAMAÇÃO-MANUTENCAO.jpg" alt="Imagem 3">
+                <img id="image4" src="img/PROGRAMAÇÃO-OBRA.jpg" alt="Imagem 4">
+                <img id="image5" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 5">
+                <img id="image6" src="img/PROGRAMAÇÃO-OBRA.jpg" alt="Imagem 6">
             </div>
         </div>
     </main>
-
+<section class="botoes-de-acesso">
+    <legend class="acessos"><p><b>Acessar Relatórios para Apresentação</b></p></legend>
+    <p>Grupo Partnership - Rio Verde/GO</p>
+    <section>
+        <a href="https://app.powerbi.com/groups/me/reports/d887cf54-8667-47a9-9cd9-3ae44b0a2e12/8e9de16517cdb70770d8?experience=power-bi" target="_blank" rel="noopener noreferrer">
+            <button class="botoes-de-acesso">👷🏻‍♀Serviços Técnicos Comerciais</button>
+        </a>
+        <a href="https://app.powerbi.com/groups/me/reports/d887cf54-8667-47a9-9cd9-3ae44b0a2e12/2f3541911d2e1c3051be?experience=power-bi" target="_blank" rel="noopener noreferrer">
+            <button class="botoes-de-acesso">👷🏻‍♀Setor de Obras</button>
+        </a>
+        <a href="https://app.powerbi.com/groups/me/reports/d887cf54-8667-47a9-9cd9-3ae44b0a2e12/0b30a1b4ac8028d682bd?experience=power-bi" target="_blank" rel="noopener noreferrer">
+            <button class="botoes-de-acesso">👷🏻‍♀Setor de Manutenção</button>
+        </a>
+        <a href="https://app.powerbi.com/groups/me/reports/9a334173-f8b8-4e3c-8bc7-4d715fe0043b/b87f5e303ea663e5279a?experience=power-bi*" target="_blank" rel="noopener noreferrer">
+            <button class="botoes-de-acesso">👷🏻‍♀Setor de Perdas</button>
+        </a>
+    <br>
+    <p>desenvolvido por: Arnaldo S. Lima</p>
+    <br>
+    <br>
+    <br>
+    <br>
+</section>
+</section>
     <script>
         function toggleFullScreen() {
             var container = document.querySelector('.image-container');
@@ -131,20 +189,19 @@
         }
 
         function startImageTransition() {
-            let image1 = document.getElementById('image1');
-            let image2 = document.getElementById('image2');
-            let currentImage = image1;
+            const images = document.querySelectorAll('.image-container img');
+            let currentImageIndex = 0;
 
             function transitionImages() {
-                currentImage.classList.remove('active');
-                currentImage = (currentImage === image1) ? image2 : image1;
-                currentImage.classList.add('active');
+                images[currentImageIndex].classList.remove('active');
+                currentImageIndex = (currentImageIndex + 1) % images.length; 
+                images[currentImageIndex].classList.add('active');
 
-                setTimeout(transitionImages, currentImage === image1 ? 300000 : 60000);
+                setTimeout(transitionImages, 3000000);
             }
 
-            currentImage.classList.add('active');
-            setTimeout(transitionImages, 300000); // Iniciar após 5 minutos
+            images[currentImageIndex].classList.add('active');
+            setTimeout(transitionImages, 300000);
         }
 
         window.onload = startImageTransition;
