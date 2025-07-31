@@ -120,7 +120,7 @@
         }
     </style>
 </head>
-<body>
+<body onclick="toggleFullScreen()">
     <header>
         <img class="logo" src="img/logo.png" alt="">
         <h1>Equipes Pesadas</h1>
@@ -129,20 +129,20 @@
             <img src="" alt="">
             <img src="" alt="">
         </div>
-        <div class="button-container">
+        <!-- <div class="button-container">
             <button id="fullscreen-btn" onclick="toggleFullScreen()"><b>Tela Cheia</b></button>
             <button id="refresh-btn" onclick="refreshReport()"><b>Atualizar</b></button>
-        </div>
+        </div> -->
     </header>
     <main>
         <div class="report-container">
             <div class="image-container">
-                <img id="image1" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 1">
-                <img id="image2" src="img/OBRA-DIARIO.jpg" alt="Imagem 2">
-                <img id="image3" src="img/OBRA-MES.jpg" alt="Imagem 3">
-                <img id="image4" src="img/PROGRAMAÇÃO-MANUTENCAO.jpg" alt="Imagem 4">
-                <img id="image5" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 5">
-                <img id="image6" src="img/OBRA-DIARIO.jpg" alt="Imagem 6">
+                <img onclick="refreshReport()" id="image1" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 1">
+                <img onclick="refreshReport()" id="image2" src="img/OBRA-DIARIO.jpg" alt="Imagem 2">
+                <img onclick="refreshReport()" id="image3" src="img/OBRA-MES.jpg" alt="Imagem 3">
+                <img onclick="refreshReport()" id="image4" src="img/PROGRAMAÇÃO-MANUTENCAO.jpg" alt="Imagem 4">
+                <img onclick="refreshReport()" id="image5" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 5">
+                <img onclick="refreshReport()" id="image6" src="img/OBRA-DIARIO.jpg" alt="Imagem 6">
             </div>
         </div>
     </main>
