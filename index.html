@@ -1,210 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PESADA</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #123;
-            margin: 10;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        header {
-            background: linear-gradient(to right, #32cd32, #ffa500, #123);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            border-radius: 50px;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        header h2 {
-            margin: 10px 0 0;
-        }
-        .logo-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin: 10px 0;
-        }
-        .logo-container img {
-            border-radius: 100%;
-            max-height: 100px;
-            max-width: auto;
-        }
-        .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .button-container button {
-            width: 850px;
-            border-radius: 10px;
-            padding: 60px 50px;
-            background-color: white;
-            color: #123;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .button-container button:hover {
-            background-color: #45a049;
-            color: white;
-            font-size: 25px;
-        }
-        main {
-            padding: 20px;
-            width: 95%;
-        }
-        .report-container {
-            border-radius: 20px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .image-container {
-            position: relative;
-            width: 100%;
-            height: 480.25px;
-            border: none;
-            border-radius: 10px;
-        }
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            transition: opacity 2s ease-in-out;
-            opacity: 0;
-        }
-        .image-container img.active {
-            opacity: 1;
-        }
-        p{
-            color: white;
-            font-size: arial;
-        }
-        .acessos{
-            border: white;
-            font-size: 30px;
-        }
-        .botoes-de-acesso{
-            padding: 10px;
-            font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
-            color: black;
-            border-radius: 10px;
-            border-color: #123;
-
-        }
-        .botoes-de-acesso button:hover {
-            background-color: rgb(11, 234, 112);
-            color: #123;
-            font-size: 20px;
-            border-color: gold;
-        }
-        .logo{
-            width: 200px;
-            height: auto;
-        }
-    </style>
+<meta charset="utf-8" />
+<title>PESADA - Exibição</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;background:#123;margin:0;color:#fff;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+  header{width:100%;padding:18px 12px;text-align:center;background:linear-gradient(90deg,#32cd32,#ffa500,#123);box-shadow:0 4px 10px rgba(0,0,0,.25)}
+  .container{max-width:1400px;width:100%;padding:14px}
+  .image-container{position:relative;width:100%;height:600px;border-radius:12px;overflow:hidden;background:#000}
+  .image-container img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease}
+  .image-container img.active{opacity:1}
+  .controls{margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center}
+  .btn{background:#fff;color:#000;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+</style>
 </head>
-<body onclick="toggleFullScreen()">
-    <header>
-        <img class="logo" src="img/logo.png" alt="">
-        <h1>Equipes Pesadas</h1>
-        <h2>Unidade de Rio Verde, Goiás - Grupo Partnership</h2>
-        <div class="logo-container">
-            <img src="" alt="">
-            <img src="" alt="">
-        </div>
-        <!-- <div class="button-container">
-            <button id="fullscreen-btn" onclick="toggleFullScreen()"><b>Tela Cheia</b></button>
-            <button id="refresh-btn" onclick="refreshReport()"><b>Atualizar</b></button>
-        </div> -->
-    </header>
-    <main>
-        <div class="report-container">
-            <div class="image-container">
-                <img onclick="refreshReport()" id="image1" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 1">
-                <img onclick="refreshReport()" id="image2" src="img/OBRA-DIARIO.jpg" alt="Imagem 2">
-                <img onclick="refreshReport()" id="image3" src="img/OBRA-MES.jpg" alt="Imagem 3">
-                <img onclick="refreshReport()" id="image4" src="img/PROGRAMAÇÃO-MANUTENCAO.jpg" alt="Imagem 4">
-                <img onclick="refreshReport()" id="image5" src="img/MANUTENCAO-DIARIO.jpg" alt="Imagem 5">
-                <img onclick="refreshReport()" id="image6" src="img/OBRA-DIARIO.jpg" alt="Imagem 6">
-            </div>
-        </div>
-    </main>
-<section class="botoes-de-acesso">
-    <legend class="acessos"><p><b>Acessar Relatórios para Apresentação</b></p></legend>
-    <p>Grupo Partnership - Rio Verde/GO</p>
-    <section>
-        <a href="https://app.powerbi.com/groups/me/reports/d887cf54-8667-47a9-9cd9-3ae44b0a2e12/8e9de16517cdb70770d8?experience=power-bi" target="_blank" rel="noopener noreferrer">
-            <button class="botoes-de-acesso">👷🏻‍♀Serviços Técnicos Comerciais</button>
-        </a>
-        <a href="https://app.powerbi.com/groups/me/reports/d887cf54-8667-47a9-9cd9-3ae44b0a2e12/2f3541911d2e1c3051be?experience=power-bi" target="_blank" rel="noopener noreferrer">
-            <button class="botoes-de-acesso">👷🏻‍♀Setor de Obras</button>
-        </a>
-        <a href="https://app.powerbi.com/groups/me/reports/d887cf54-8667-47a9-9cd9-3ae44b0a2e12/0b30a1b4ac8028d682bd?experience=power-bi" target="_blank" rel="noopener noreferrer">
-            <button class="botoes-de-acesso">👷🏻‍♀Setor de Manutenção</button>
-        </a>
-        <a href="https://app.powerbi.com/groups/me/reports/9a334173-f8b8-4e3c-8bc7-4d715fe0043b/b87f5e303ea663e5279a?experience=power-bi*" target="_blank" rel="noopener noreferrer">
-            <button class="botoes-de-acesso">👷🏻‍♀Setor de Perdas</button>
-        </a>
-    <br>
-    <p>desenvolvido por: Arnaldo S. Lima</p>
-    <br>
-    <br>
-    <br>
-    <br>
-</section>
-</section>
-    <script>
-        function toggleFullScreen() {
-            var container = document.querySelector('.image-container');
-            if (container.requestFullscreen) {
-                container.requestFullscreen();
-            } else if (container.mozRequestFullScreen) { 
-                container.mozRequestFullScreen();
-            } else if (container.webkitRequestFullscreen) {
-                container.webkitRequestFullscreen();
-            } else if (container.msRequestFullscreen) {
-                container.msRequestFullscreen();
-            }
-        }
+<body>
 
-        function refreshReport() {
-            location.reload();
-        }
+<header>
+  <h1>Equipes Pesadas — Exibição</h1>
+  <p>Unidade Rio Verde - Grupo Partnership</p>
+</header>
+<button id="fullscreen-btn" onclick="toggleFullScreen()" style="
+    padding: 10px 20px;
+    background: white;
+    color: #123;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-top: 10px;
+">
+    TELA CHEIA
+</button>
 
-        function startImageTransition() {
-            const images = document.querySelectorAll('.image-container img');
-            let currentImageIndex = 0;
+<div class="container">
+  <div class="image-container" id="container"></div>
 
-            function transitionImages() {
-                images[currentImageIndex].classList.remove('active');
-                currentImageIndex = (currentImageIndex + 1) % images.length; 
-                images[currentImageIndex].classList.add('active');
+  <div class="controls">
+    <button id="prev" class="btn">◀</button>
+    <button id="pause" class="btn">Pausar</button>
+    <button id="next" class="btn">▶</button>
+    <div id="status" style="color:#fff;margin-left:12px"></div>
+  </div>
+</div>
 
-                setTimeout(transitionImages, 3000000);
-            }
+<script type="module">
+/*
+  Exibição atualizada:
+  - Lê RELATORIOS-PESADAS-PRTNRV/imagens e tempo
+  - Suporte a lista vazia
+  - Troca com setTimeout recursivo (permite reiniciar quando tempo muda)
+  - Botões prev/next/pause
+*/
 
-            images[currentImageIndex].classList.add('active');
-            setTimeout(transitionImages, 300000);
-        }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-        window.onload = startImageTransition;
-    </script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBehqlRiCiDniyPi3bjHtkH7q2-Px-KoZc",
+  authDomain: "cadastr-produtos-clevir.firebaseapp.com",
+  databaseURL: "https://cadastr-produtos-clevir-default-rtdb.firebaseio.com",
+  projectId: "cadastr-produtos-clevir",
+  storageBucket: "cadastr-produtos-clevir.firebasestorage.app",
+  messagingSenderId: "1028296092810",
+  appId: "1:1028296092810:web:86859328b19c1fdf511173",
+  measurementId: "G-JGE4Q09NX8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const DB_NODE = "RELATORIOS-PESADAS-PRTNRV";
+
+const container = document.getElementById("container");
+const status = document.getElementById("status");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const pauseBtn = document.getElementById("pause");
+
+let imagens = []; // array de { key, url }
+let tempo = 5000;
+let index = 0;
+let timer = null;
+let paused = false;
+
+// montar slides na DOM
+function montarSlides(){
+  container.innerHTML = "";
+  if(imagens.length === 0){
+    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff">Sem imagens cadastradas</div>`;
+    return;
+  }
+  for(const item of imagens){
+    const img = document.createElement("img");
+    img.src = item.url;
+    img.dataset.key = item.key;
+    container.appendChild(img);
+  }
+  // ativar primeiro
+  index = index % imagens.length;
+  mostrarAtivo();
+  reiniciarTroca();
+}
+
+// mostra o img index como active
+function mostrarAtivo(){
+  const imgs = container.querySelectorAll("img");
+  imgs.forEach((im,i) => im.classList.toggle("active", i === index));
+  status.textContent = `Imagem ${index+1} / ${Math.max(imagens.length,1)} • Tempo: ${tempo} ms`;
+}
+
+// troca próxima
+function proximo(){
+  if(imagens.length === 0) return;
+  index = (index + 1) % imagens.length;
+  mostrarAtivo();
+}
+
+// troca anterior
+function anterior(){
+  if(imagens.length === 0) return;
+  index = (index - 1 + imagens.length) % imagens.length;
+  mostrarAtivo();
+}
+
+// reinicia loop usando setTimeout (assim respeitamos mudanças de tempo)
+function reiniciarTroca(){
+  if(timer) { clearTimeout(timer); timer = null; }
+  if(paused) return;
+  if(imagens.length === 0) return;
+  timer = setTimeout(()=>{
+    proximo();
+    reiniciarTroca();
+  }, tempo);
+}
+
+// listeners dos botões
+prevBtn.addEventListener("click", ()=>{
+  anterior();
+  reiniciarTroca();
+});
+nextBtn.addEventListener("click", ()=>{
+  proximo();
+  reiniciarTroca();
+});
+pauseBtn.addEventListener("click", ()=>{
+  paused = !paused;
+  pauseBtn.textContent = paused ? "Retomar" : "Pausar";
+  if(paused){ if(timer) { clearTimeout(timer); timer = null; } }
+  else reiniciarTroca();
+});
+
+// Escuta realtime do DB
+onValue(ref(db, DB_NODE), (snap) => {
+  const data = snap.val() || {};
+  // imagens: objeto ou undefined
+  const imgsObj = data.imagens || {};
+  // transform to array preserving key and sort by createdAt (desc)
+  imagens = Object.entries(imgsObj || {}).map(([k,v]) => ({ key:k, url: v.url || v })).sort((a,b)=>{
+    const ta = imgsObj[a.key]?.createdAt || 0;
+    const tb = imgsObj[b.key]?.createdAt || 0;
+    return tb - ta;
+  });
+
+  // tempo se existir
+  const t = data.tempo ? parseInt(data.tempo) : null;
+  if(t && t !== tempo){
+    tempo = t;
+  }
+
+  montarSlides();
+});
+</script>
+<script>
+function toggleFullScreen() {
+    const elem = document.querySelector('.image-container');
+
+    if (!document.fullscreenElement) {
+        if (elem.requestFullscreen) elem.requestFullscreen();
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
+}
+</script>
+
 </body>
 </html>
