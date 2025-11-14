@@ -2,190 +2,201 @@
 <html lang="pt-br">
 <head>
 <meta charset="utf-8" />
-<title>PESADA - Exibição</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PESADA - Exibição</title>
 <style>
   body{font-family:Arial,Helvetica,sans-serif;background:#123;margin:0;color:#fff;display:flex;flex-direction:column;align-items:center;min-height:100vh}
   header{width:100%;padding:18px 12px;text-align:center;background:linear-gradient(90deg,#32cd32,#ffa500,#123);box-shadow:0 4px 10px rgba(0,0,0,.25)}
+  .logo{width:200px}
+  .button-full{padding:10px 18px;background:#fff;color:#123;border:none;border-radius:8px;cursor:pointer;font-size:16px;margin-top:8px}
+  .button-full:hover{background:#32cd32;color:#fff}
   .container{max-width:1400px;width:100%;padding:14px}
-  .image-container{position:relative;width:100%;height:600px;border-radius:12px;overflow:hidden;background:#000}
-  .image-container img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease}
+  .report-container{position:relative;border-radius:12px;overflow:hidden;background:#000;height:600px;width:100%}
+  /* fullscreen: quando o elemento entra em fullscreen, faça-o ocupar a tela toda */
+  .report-container:fullscreen,
+  .report-container:-webkit-full-screen,
+  .report-container:-ms-fullscreen {
+    height:100vh;
+    width:100vw;
+    border-radius:0;
+  }
+  .image-container{position:relative;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center}
+  .image-container img{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:100%;max-height:100%;object-fit:contain;opacity:0;transition:opacity .9s ease}
   .image-container img.active{opacity:1}
   .controls{margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center}
   .btn{background:#fff;color:#000;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+  .status{color:#fff;margin-left:12px;font-size:14px}
+  /* mensagem quando sem imagens */
+  .empty-msg{display:flex;align-items:center;justify-content:center;height:100%;color:#fff;font-size:20px}
 </style>
 </head>
 <body>
 
 <header>
+  <img class="logo" src="img/logo.png" alt="" />
   <h1>Equipes Pesadas — Exibição</h1>
   <p>Unidade Rio Verde - Grupo Partnership</p>
+  <button class="button-full" id="fullscreenBtn">TELA CHEIA</button>
 </header>
-<button id="fullscreen-btn" onclick="toggleFullScreen()" style="
-    padding: 10px 20px;
-    background: white;
-    color: #123;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: 10px;
-">
-    TELA CHEIA
-</button>
 
 <div class="container">
-  <div class="image-container" id="container"></div>
+  <div class="report-container" id="reportContainer">
+    <div class="image-container" id="slideshow"></div>
+  </div>
 
   <div class="controls">
-    <button id="prev" class="btn">◀</button>
-    <button id="pause" class="btn">Pausar</button>
-    <button id="next" class="btn">▶</button>
-    <div id="status" style="color:#fff;margin-left:12px"></div>
+    <button class="btn" id="prevBtn">◀</button>
+    <button class="btn" id="pauseBtn">Pausar</button>
+    <button class="btn" id="nextBtn">▶</button>
+    <div class="status" id="status">Carregando...</div>
   </div>
 </div>
 
 <script type="module">
-/*
-  Exibição atualizada:
-  - Lê RELATORIOS-PESADAS-PRTNRV/imagens e tempo
-  - Suporte a lista vazia
-  - Troca com setTimeout recursivo (permite reiniciar quando tempo muda)
-  - Botões prev/next/pause
-*/
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyBehqlRiCiDniyPi3bjHtkH7q2-Px-KoZc",
+    authDomain: "cadastr-produtos-clevir.firebaseapp.com",
+    databaseURL: "https://cadastr-produtos-clevir-default-rtdb.firebaseio.com",
+    projectId: "cadastr-produtos-clevir",
+    storageBucket: "cadastr-produtos-clevir.firebasestorage.app",
+    messagingSenderId: "1028296092810",
+    appId: "1:1028296092810:web:86859328b19c1fdf511173",
+    measurementId: "G-JGE4Q09NX8"
+  };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBehqlRiCiDniyPi3bjHtkH7q2-Px-KoZc",
-  authDomain: "cadastr-produtos-clevir.firebaseapp.com",
-  databaseURL: "https://cadastr-produtos-clevir-default-rtdb.firebaseio.com",
-  projectId: "cadastr-produtos-clevir",
-  storageBucket: "cadastr-produtos-clevir.firebasestorage.app",
-  messagingSenderId: "1028296092810",
-  appId: "1:1028296092810:web:86859328b19c1fdf511173",
-  measurementId: "G-JGE4Q09NX8"
-};
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const DB_NODE = "RELATORIOS-PESADAS-PRTNRV";
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const DB_NODE = "RELATORIOS-PESADAS-PRTNRV";
+  const slideshowEl = document.getElementById("slideshow");
+  const statusEl = document.getElementById("status");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const pauseBtn = document.getElementById("pauseBtn");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+  const reportContainer = document.getElementById("reportContainer");
 
-const container = document.getElementById("container");
-const status = document.getElementById("status");
-const prevBtn = document.getElementById("prev");
-const nextBtn = document.getElementById("next");
-const pauseBtn = document.getElementById("pause");
+  let images = []; // array de { key, url, createdAt }
+  let index = 0;
+  let tempo = 5000;
+  let timer = null;
+  let paused = false;
 
-let imagens = []; // array de { key, url }
-let tempo = 5000;
-let index = 0;
-let timer = null;
-let paused = false;
+  // monta os slides no DOM (após atualizar images[])
+  function renderSlides() {
+    // limpar
+    slideshowEl.innerHTML = "";
 
-// montar slides na DOM
-function montarSlides(){
-  container.innerHTML = "";
-  if(imagens.length === 0){
-    container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff">Sem imagens cadastradas</div>`;
-    return;
+    if (!images.length) {
+      slideshowEl.innerHTML = '<div class="empty-msg">Nenhuma imagem cadastrada</div>';
+      statusEl.textContent = "Sem imagens";
+      return;
+    }
+
+    // adicionar imgs
+    images.forEach((it, i) => {
+      const img = document.createElement("img");
+      img.src = it.url || it; // compatibilidade com string ou objeto
+      img.dataset.key = it.key || "";
+      if (i === index) img.classList.add("active");
+      slideshowEl.appendChild(img);
+    });
+
+    statusEl.textContent = `Imagem ${index + 1} / ${images.length} • Tempo: ${tempo} ms`;
+
+    // reinicia loop
+    restartTimer();
   }
-  for(const item of imagens){
-    const img = document.createElement("img");
-    img.src = item.url;
-    img.dataset.key = item.key;
-    container.appendChild(img);
+
+  function restartTimer() {
+    if (timer) { clearTimeout(timer); timer = null; }
+    if (paused) return;
+    if (!images.length) return;
+    timer = setTimeout(() => {
+      nextImage();
+      restartTimer();
+    }, tempo);
   }
-  // ativar primeiro
-  index = index % imagens.length;
-  mostrarAtivo();
-  reiniciarTroca();
-}
 
-// mostra o img index como active
-function mostrarAtivo(){
-  const imgs = container.querySelectorAll("img");
-  imgs.forEach((im,i) => im.classList.toggle("active", i === index));
-  status.textContent = `Imagem ${index+1} / ${Math.max(imagens.length,1)} • Tempo: ${tempo} ms`;
-}
+  function nextImage() {
+    const imgs = slideshowEl.querySelectorAll("img");
+    if (!imgs.length) return;
+    imgs[index].classList.remove("active");
+    index = (index + 1) % imgs.length;
+    imgs[index].classList.add("active");
+    statusEl.textContent = `Imagem ${index + 1} / ${imgs.length} • Tempo: ${tempo} ms`;
+  }
 
-// troca próxima
-function proximo(){
-  if(imagens.length === 0) return;
-  index = (index + 1) % imagens.length;
-  mostrarAtivo();
-}
+  function prevImage() {
+    const imgs = slideshowEl.querySelectorAll("img");
+    if (!imgs.length) return;
+    imgs[index].classList.remove("active");
+    index = (index - 1 + imgs.length) % imgs.length;
+    imgs[index].classList.add("active");
+    statusEl.textContent = `Imagem ${index + 1} / ${imgs.length} • Tempo: ${tempo} ms`;
+  }
 
-// troca anterior
-function anterior(){
-  if(imagens.length === 0) return;
-  index = (index - 1 + imagens.length) % imagens.length;
-  mostrarAtivo();
-}
-
-// reinicia loop usando setTimeout (assim respeitamos mudanças de tempo)
-function reiniciarTroca(){
-  if(timer) { clearTimeout(timer); timer = null; }
-  if(paused) return;
-  if(imagens.length === 0) return;
-  timer = setTimeout(()=>{
-    proximo();
-    reiniciarTroca();
-  }, tempo);
-}
-
-// listeners dos botões
-prevBtn.addEventListener("click", ()=>{
-  anterior();
-  reiniciarTroca();
-});
-nextBtn.addEventListener("click", ()=>{
-  proximo();
-  reiniciarTroca();
-});
-pauseBtn.addEventListener("click", ()=>{
-  paused = !paused;
-  pauseBtn.textContent = paused ? "Retomar" : "Pausar";
-  if(paused){ if(timer) { clearTimeout(timer); timer = null; } }
-  else reiniciarTroca();
-});
-
-// Escuta realtime do DB
-onValue(ref(db, DB_NODE), (snap) => {
-  const data = snap.val() || {};
-  // imagens: objeto ou undefined
-  const imgsObj = data.imagens || {};
-  // transform to array preserving key and sort by createdAt (desc)
-  imagens = Object.entries(imgsObj || {}).map(([k,v]) => ({ key:k, url: v.url || v })).sort((a,b)=>{
-    const ta = imgsObj[a.key]?.createdAt || 0;
-    const tb = imgsObj[b.key]?.createdAt || 0;
-    return tb - ta;
+  prevBtn.addEventListener("click", () => { prevImage(); restartTimer(); });
+  nextBtn.addEventListener("click", () => { nextImage(); restartTimer(); });
+  pauseBtn.addEventListener("click", () => {
+    paused = !paused;
+    pauseBtn.textContent = paused ? "Retomar" : "Pausar";
+    if (paused) { if (timer) { clearTimeout(timer); timer = null; } }
+    else restartTimer();
   });
 
-  // tempo se existir
-  const t = data.tempo ? parseInt(data.tempo) : null;
-  if(t && t !== tempo){
-    tempo = t;
-  }
-
-  montarSlides();
-});
-</script>
-<script>
-function toggleFullScreen() {
-    const elem = document.querySelector('.image-container');
-
+  // Fullscreen toggle (aplica ao reportContainer)
+  fullscreenBtn.addEventListener("click", () => {
     if (!document.fullscreenElement) {
-        if (elem.requestFullscreen) elem.requestFullscreen();
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+      if (reportContainer.requestFullscreen) reportContainer.requestFullscreen();
+      else if (reportContainer.webkitRequestFullscreen) reportContainer.webkitRequestFullscreen();
+      else if (reportContainer.msRequestFullscreen) reportContainer.msRequestFullscreen();
     } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
     }
-}
+  });
+
+  // Ouvir mudanças no Firebase em tempo real
+  const rootRef = ref(db, DB_NODE);
+  onValue(rootRef, (snap) => {
+    const data = snap.val() || {};
+    // ler tempo (se existir e for número)
+    if (data.tempo && !isNaN(parseInt(data.tempo))) tempo = parseInt(data.tempo);
+    else tempo = 5000;
+
+    // imagens: pode ser objeto { key: {url, ...}, ... } ou array/string
+    const imgsObj = data.imagens || {};
+    if (!imgsObj || (typeof imgsObj === "object" && Object.keys(imgsObj).length === 0)) {
+      images = [];
+      index = 0;
+      renderSlides();
+      return;
+    }
+
+    // transformar em array padronizado [{key,url,createdAt}, ...]
+    if (Array.isArray(imgsObj)) {
+      images = imgsObj.map((v,i) => ({ key: i, url: (v && v.url) ? v.url : v, createdAt: v?.createdAt || 0 }));
+    } else {
+      images = Object.entries(imgsObj).map(([k,v]) => ({ key: k, url: (v && v.url) ? v.url : v, createdAt: v?.createdAt || 0 }));
+    }
+
+    // ordenar por createdAt desc (novas primeiro). Se createdAt faltar, mantém ordem.
+    images.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    // se o index está fora do range, resetar para 0
+    if (index >= images.length) index = 0;
+
+    renderSlides();
+  }, (err) => {
+    console.error("Erro ao escutar Firebase:", err);
+    statusEl.textContent = "Erro ao carregar dados";
+  });
+
 </script>
 
 </body>
